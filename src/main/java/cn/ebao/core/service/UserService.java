@@ -4,6 +4,7 @@ import cn.ebao.core.domain.Authority;
 import cn.ebao.core.domain.User;
 import cn.ebao.core.repository.AuthorityRepository;
 import cn.ebao.core.repository.PersistentTokenRepository;
+import cn.ebao.core.config.Constants;
 import cn.ebao.core.repository.UserRepository;
 import cn.ebao.core.security.AuthoritiesConstants;
 import cn.ebao.core.security.SecurityUtils;
@@ -195,7 +196,7 @@ public class UserService {
 
     @Transactional(readOnly = true)    
     public Page<UserDTO> getAllManagedUsers(Pageable pageable) {
-        return userRepository.findAll(pageable).map(UserDTO::new);
+        return userRepository.findAllByLoginNot(pageable, Constants.ANONYMOUS_USER).map(UserDTO::new);
     }
 
     @Transactional(readOnly = true)

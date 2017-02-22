@@ -4,7 +4,9 @@ import cn.ebao.core.InsiapProposalApp;
 import cn.ebao.core.domain.PersistentToken;
 import cn.ebao.core.domain.User;
 import cn.ebao.core.repository.PersistentTokenRepository;
+import cn.ebao.core.config.Constants;
 import cn.ebao.core.repository.UserRepository;
+import cn.ebao.core.service.dto.UserDTO;
 import java.time.ZonedDateTime;
 import cn.ebao.core.service.util.RandomUtil;
 import java.time.LocalDate;
@@ -15,6 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import java.util.Optional;
 import java.util.List;
 
@@ -141,5 +145,14 @@ public class UserServiceIntTest {
         token.setIpAddress("127.0.0.1");
         token.setUserAgent("Test agent");
         persistentTokenRepository.saveAndFlush(token);
+    }
+
+    @Test
+    public void assertThatAnonymousUserIsNotGet() {
+        final PageRequest pageable = new PageRequest(0, (int) userRepository.count());
+        final Page<UserDTO> allManagedUsers = userService.getAllManagedUsers(pageable);
+        assertThat(allManagedUsers.getContent().stream()
+            .noneMatch(user -> Constants.ANONYMOUS_USER.equals(user.getLogin())))
+            .isTrue();
     }
 }

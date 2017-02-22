@@ -1,6 +1,6 @@
 {
   "generator-jhipster": {
-    "jhipsterVersion": "4.0.3",
+    "jhipsterVersion": "4.0.6",
     "baseName": "insiap_proposal",
     "packageName": "cn.ebao.core",
     "packageFolder": "cn/ebao/core",

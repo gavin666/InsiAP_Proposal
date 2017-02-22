@@ -1,5 +1,6 @@
 package cn.ebao.core;
 
+import cn.ebao.core.config.ApplicationProperties;
 import cn.ebao.core.config.DefaultProfileUtil;
 
 import io.github.jhipster.config.JHipsterConstants;
@@ -22,7 +23,7 @@ import java.util.Collection;
 
 @ComponentScan
 @EnableAutoConfiguration(exclude = {MetricFilterAutoConfiguration.class, MetricRepositoryAutoConfiguration.class})
-@EnableConfigurationProperties(LiquibaseProperties.class)
+@EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class})
 public class InsiapProposalApp {
 
     private static final Logger log = LoggerFactory.getLogger(InsiapProposalApp.class);
@@ -63,13 +64,19 @@ public class InsiapProposalApp {
         SpringApplication app = new SpringApplication(InsiapProposalApp.class);
         DefaultProfileUtil.addDefaultProfile(app);
         Environment env = app.run(args).getEnvironment();
+        String protocol = "http";
+        if (env.getProperty("server.ssl.key-store") != null) {
+            protocol = "https";
+        }
         log.info("\n----------------------------------------------------------\n\t" +
                 "Application '{}' is running! Access URLs:\n\t" +
-                "Local: \t\thttp://localhost:{}\n\t" +
-                "External: \thttp://{}:{}\n\t" +
+                "Local: \t\t{}://localhost:{}\n\t" +
+                "External: \t{}://{}:{}\n\t" +
                 "Profile(s): \t{}\n----------------------------------------------------------",
             env.getProperty("spring.application.name"),
+            protocol,
             env.getProperty("server.port"),
+            protocol,
             InetAddress.getLocalHost().getHostAddress(),
             env.getProperty("server.port"),
             env.getActiveProfiles());
